@@ -1,7 +1,7 @@
 class PuppetServerGem < FPM::Cookery::Recipe
   description 'Puppet Server gem stack'
 
-  name 'puppet-server'
+  name 'puppet'
   version '3.2.3'
 
   conflicts 'puppet'
