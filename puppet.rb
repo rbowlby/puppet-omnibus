@@ -4,6 +4,14 @@ class PuppetGem < FPM::Cookery::Recipe
   name 'puppet'
   version '3.2.3'
 
+  provides 'puppet'
+  provides 'facter'
+  provides 'hiera'
+
+  replaces 'puppet'
+  replaces 'facter'
+  replaces 'hiera'
+
   source "nothing", :with => :noop
 
   platforms [:ubuntu, :debian] do
