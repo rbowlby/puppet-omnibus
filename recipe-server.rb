@@ -5,12 +5,20 @@ class PuppetServerOmnibus < FPM::Cookery::Recipe
   name 'puppet-server-omnibus'
   version '3.2.3'
   description 'Puppet Server Omnibus package'
-  revision 0
+  revision 5
   vendor 'fpm'
   maintainer '<github@tinycat.co.uk>'
   license 'Apache 2.0 License'
 
   source '', :with => :noop
+
+  conflicts 'puppet'
+  conflicts 'puppet-server'
+
+  provides 'puppet'
+  provides 'puppet-server'
+  provides 'facter'
+  provides 'hiera'
 
   omnibus_package true
   omnibus_dir     "/opt/#{name}"

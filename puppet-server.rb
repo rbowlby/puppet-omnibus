@@ -4,19 +4,6 @@ class PuppetServerGem < FPM::Cookery::Recipe
   name 'puppet'
   version '3.2.3'
 
-  conflicts 'puppet'
-  conflicts 'puppet-server'
-
-  provides 'puppet'
-  provides 'puppet-server'
-  provides 'facter'
-  provides 'hiera'
-
-  replaces 'puppet'
-  replaces 'puppet-server'
-  replaces 'facter'
-  replaces 'hiera'
-
   source "nothing", :with => :noop
 
   platforms [:ubuntu, :debian] do
@@ -44,11 +31,11 @@ class PuppetServerGem < FPM::Cookery::Recipe
     # install puppetdb-terminus gem, not in rubygems yet
     system "curl -L https://github.com/puppetlabs/puppetdb/tarball/master | tar zx --directory=#{builddir}"
     system "git clone https://github.com/puppetlabs/puppetdb"
-    # will this work?
     Dir.chdir("#{builddir}/puppetdb"){
       system "gem build contrib/gem/puppetdb-terminus.gemspec"
     }
     cleanenv_safesystem "#{destdir}/bin/gem install --no-ri --no-rdoc #{builddir}/puppetdb/puppetdb-terminus-1.0.gem"
+    system "cp -R #{destdir}/lib/ruby/gems/1.9.1/gems/puppetdb-terminus-1.0/puppet/lib/puppet/* #{destdir}/lib/ruby/gems/1.9.1/gems/puppet-3.2.3/lib/puppet/"
 
     # Download init scripts and conf
     build_files
@@ -131,7 +118,7 @@ BIN_PATH="#{destdir}/bin"
 BINS="puppet facter hiera"
 
 for BIN in $BINS; do
-  update-alternatives --install /usr/bin/$BIN $BIN $BIN_PATH/$BIN 100
+  /bin/sh -c "sleep 15 && update-alternatives --install /usr/bin/$BIN $BIN $BIN_PATH/$BIN 100" &
 done
 
 exit 0
@@ -148,7 +135,7 @@ set -e
 BIN_PATH="#{destdir}/bin"
 BINS="puppet facter hiera"
 
-if [ "$1" != "upgrade" ]; then
+if [ $1 -eq 0 ]; then
   for BIN in $BINS; do
     update-alternatives --remove $BIN $BIN_PATH/$BIN
   done
